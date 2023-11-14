@@ -3,27 +3,26 @@
 ## Task
 ### 11.14 - 11.22
 For all :
-- [ ] Install the AI2THOR rearragement and mass github repo.
+- [ ] Install the AI2THOR rearrangement and mass Github repo.
         https://github.com/allenai/ai2thor-rearrangement/
         https://github.com/brandontrabucco/mass/
+- [ ] Find potential 3D object bounding box code candidates.
 
-- [ ] Find possible 3D object Oriented Bounding Box code.
+Name 1: 
+- [ ] Learn how to use the dataset: train, val, test. https://github.com/allenai/ai2thor-rearrangement/tree/main/data/2023s
 
 ### 11.22 - 12.3
-Name: 
-- [ ] Learn how to use the dataset: train, val, test. https://github.com/allenai/ai2thor-rearrangement/tree/main/data/2023s
-- [ ] Integrat the 3D object Oriented Bounding Box code to our project.
+Name 2,3: 
+- [ ] Determine a working SOTA 3D object bounding box codebase.
+- [ ] Integrate the 3D object bounding box code to our project.
 
-Name: 
-- [ ] Run the selected 3D object Oriented Bounding Box code.
-
-Name:
+Name 1:
 - [ ] Prepare the code structure for our project.
 
 ### 12.3 - 12.16
 - [ ] Write report.
 - [ ] Run the experiment tests.
-- [ ] Add 3D object Oriented Bounding Box code to mass.
+- [ ] (If possible) Add 3D object bounding box code to MaSS.
 
 ## References
 ### 3D object Oriented Bounding Box

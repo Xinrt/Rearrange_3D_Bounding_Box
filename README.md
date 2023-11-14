@@ -9,7 +9,7 @@ For all :
 - [ ] Find potential 3D object bounding box code candidates.
 
 Name 1: 
-- [ ] Learn how to use the dataset: train, val, test. https://github.com/allenai/ai2thor-rearrangement/tree/main/data/2023s
+- [ ] Learn how to use the dataset: train, val, test. https://github.com/allenai/ai2thor-rearrangement/tree/main/data/2023
 
 ### 11.22 - 12.3
 Name 2,3: 

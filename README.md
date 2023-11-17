@@ -24,6 +24,25 @@ Name 1:
 - [ ] Run the experiment tests.
 - [ ] (If possible) Add 3D object bounding box code to MaSS.
 
+## Run
+```
+export PYTHONPATH=$PYTHONPATH::/path/to/ai2thor-rearrangement
+export PYTHONPATH=$PYTHONPATH::/path/to/Rearrange_3D_Bounding_Box
+```
+
+
+```
+python -u agent.py \
+--logdir ./testing-the-agent --stage val \
+--semantic-search-walkthrough \
+--semantic-search-unshuffle \
+--use-feature-matching \
+--start-task 0 --total-tasks 20
+```
+
+
+
+
 ## References
 ### 3D object Oriented Bounding Box
 1. [Canonical Voting: Towards Robust Oriented Bounding Box Detection

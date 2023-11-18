@@ -7,6 +7,7 @@ import argparse
 import os
 import json
 import shutil
+from tqdm import tqdm
 
 import detectron2.structures as structures
 
@@ -67,8 +68,8 @@ def create_dataset(args):
             next(task_sampler.task_spec_iterator)
 
     # perform evaluation using every task in the task sampler
-    for task_id in range(args.start_task, args.start_task + (
-            args.total_tasks * args.every_tasks), args.every_tasks):
+    for task_id in tqdm(range(args.start_task, args.start_task + (
+            args.total_tasks * args.every_tasks), args.every_tasks)):
 
         def callback(obs: dict, image_index):
             """Callback function executed at every step during an episode
@@ -155,8 +156,6 @@ def create_dataset(args):
                     training_example["segments_info"].append(
                         dict(category_id=category_id,
                              id=total_instances, isthing=True))
-
-                    
                     
                     # print("category_id: ", category_id)
                     object_name_from_frame = get_object_name_from_id(category_id)
@@ -219,81 +218,7 @@ def create_dataset(args):
         with TimeoutDueToUnityCrash():
             task = task_sampler.next_task()
 
-        # def calculate_distance(pos1, pos2):
-        #     return math.sqrt((pos1['x'] - pos2['x']) ** 2 + (pos1['y'] - pos2['y']) ** 2 + (pos1['z'] - pos2['z']) ** 2)
-
-        # camera_position = task.env.controller.last_event.metadata["cameraPosition"]
-        
-        # # set storage path
-        # save_path = "/scratch/xt2191/Rearrangement_LLM/scripts/test"
-        # if not os.path.exists(save_path):
-        #     os.makedirs(save_path)
-
-        # # store current frame
-        # frame = task.env.controller.last_event.frame
-        # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # frame_save_path = os.path.join(save_path, "frame.png")
-        # cv2.imwrite(frame_save_path, frame)
-
-
-        # # find object ids
-        # for obj in task.env.controller.last_event.metadata["objects"]:
-        #     print("objectType: ", obj["objectType"])
-        #     print("objectId: ", obj["objectId"])
-        #     object_id = obj["objectId"]
-
-        #     # find openness
-        #     print("openness: ", obj["openness"])
-        #     print("axisAlignedBoundingBox: ", obj["axisAlignedBoundingBox"])
-
-
-        #     # # find mask
-        #     # if object_id in task.env.last_event.instance_masks:
-        #     #     mask = task.env.last_event.instance_masks[object_id]
-        #     #     print(f"Mask for {object_id}: {mask}")
-        #     # else:
-        #     #     print(f"No mask found for {object_id}")
-
-        #     # # find 2D detection box
-        #     # if object_id in task.env.last_event.instance_detections2D:
-        #     #     detection2D = task.env.last_event.instance_detections2D[object_id]
-        #     #     print(f"detection 2D box for {object_id}: {detection2D}")
-        #     # else:
-        #     #     print(f"No detection 2D box found for {object_id}")
-            
-        #     # find distance
-        #     object_position = obj["position"]
-        #     distance = calculate_distance(object_position, camera_position)
-        #     print(f"Distance from camera to {obj['objectId']}: {distance}")
-            
-
-        #     print()
-        
-
-        # # instance_segmentation_test = (task.env.last_event.instance_segmentation_frame)
-        # # print("instance_segmentation_test: ", instance_segmentation_test)
-
-        # instance_mask = (task.env.last_event.instance_masks)
-        # for mask in instance_mask:
-        #     print("instance_mask: ", mask)
-
-        # instance_detections2D = (task.env.last_event.instance_detections2D)
-        # for detection2D in instance_detections2D: 
-        #     print("instance_detections2D: ", detection2D)
-        # import pdb; pdb.set_trace()
-        # # find the openness
-
-
-
-
-        # event = controller.step(
-        #     action="OpenObject",
-        #     objectId="Book|0.25|-0.27|0.95",
-        #     openness=1,
-        #     forceAction=False
-        # )
-
-        # event.metadata["objects"][i]
+        print("TaskID: {}, Task Scene: {}".format(task_id, task.env.controller.last_event.metadata["sceneName"]))
 
 
         valid_positions = task.env.controller.step(
@@ -358,6 +283,10 @@ def run_experiment(args):
 
     os.makedirs(os.path.join(args.logdir, f"annotations"), exist_ok=True)
     os.makedirs(os.path.join(args.logdir, f"images"), exist_ok=True)
+    os.makedirs(os.path.join(args.logdir, f"rgb"), exist_ok=True)
+    os.makedirs(os.path.join(args.logdir, f"pan"), exist_ok=True)
+    os.makedirs(os.path.join(args.logdir, f"sem"), exist_ok=True)
+    os.makedirs(os.path.join(args.logdir, f"depth"), exist_ok=True)
 
     os.makedirs(os.path.join(args.logdir, f"tmp-{name}"), exist_ok=True)
     os.environ["HOME"] = os.path.join(args.logdir, f"tmp-{name}")
@@ -381,9 +310,9 @@ if __name__ == '__main__':
     parser.add_argument("--every-tasks",
                         type=int, default=1)
     parser.add_argument("--total-tasks",
-                        type=int, default=50)
+                        type=int, default=4000)
 
     parser.add_argument("--images-per-task",
-                        type=int, default=500)
+                        type=int, default=250)
 
     run_experiment(parser.parse_args())

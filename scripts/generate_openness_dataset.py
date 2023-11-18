@@ -88,14 +88,16 @@ def create_dataset(args):
 
 
             # construct the disk path to the rgb and semantic images
-            file_name = f"images/{image_id:07d}-rgb.png"  # we will generate
-            sem_seg_file_name = f"images/{image_id:07d}-sem.png"
-            pan_seg_file_name = f"images/{image_id:07d}-pan.png"
+            file_name = f"rgb/{image_id:07d}-rgb.png"  # we will generate
+            sem_seg_file_name = f"sem/{image_id:07d}-sem.png"
+            pan_seg_file_name = f"pan/{image_id:07d}-pan.png"
+            depth_file_name = f"depth/{image_id:07d}-depth.png"
 
             # store semantic segmentation annotations in a dictionary format
             training_example = dict(image_id=image_id, file_name=file_name,
                                     sem_seg_file_name=sem_seg_file_name,
                                     pan_seg_file_name=pan_seg_file_name,
+                                    depth_file_name=depth_file_name,
                                     height=obs["semantic"].shape[0],
                                     width=obs["semantic"].shape[1],
                                     segments_info=[], annotations=[])
@@ -109,6 +111,12 @@ def create_dataset(args):
             # generate a set of instance ids from the environment
             instance_segmentation = (  # to handle partial occlusion
                 task.env.last_event.instance_segmentation_frame)
+            
+            # print("instance_segmentation: ", instance_segmentation)
+
+            # depth = (  # to handle partial occlusion
+            #     task.env.last_event.depth_frame)
+            # print("depth: ", depth)
             instance_segmentation = (instance_segmentation[..., 0:1] +
                                      instance_segmentation[..., 1:2] * 256 +
                                      instance_segmentation[..., 2:3] * 256 * 256)
@@ -197,6 +205,8 @@ def create_dataset(args):
                         obs["semantic"][..., 0])
             cv2.imwrite(os.path.join(args.logdir, pan_seg_file_name),
                         instance_rgb[..., ::-1])
+            cv2.imwrite(os.path.join(args.logdir, depth_file_name),
+                        255 * obs["depth"][..., ::-1])
 
             # open the target file for this image and write
             with open(os.path.join(  # the annotations to a json file

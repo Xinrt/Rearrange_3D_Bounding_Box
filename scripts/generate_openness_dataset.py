@@ -3,7 +3,7 @@ import torch
 import cv2
 import math
 import torch
-import threading
+import multiprocessing
 import time
 
 import argparse
@@ -313,14 +313,16 @@ def run_experiment(args):
 
     os.makedirs(os.path.join(args.logdir, f"tmp-{name}"), exist_ok=True)
 
-    thread = threading.Thread(target=keep_gpu_busy)
-    thread.start()
+    proc = multiprocessing.Process(target=keep_gpu_busy)
+    proc.start()
 
     os.environ["HOME"] = os.path.join(args.logdir, f"tmp-{name}")
 
     run_experiment_with_restart(create_dataset, args)
 
     shutil.rmtree(os.environ["HOME"], onerror=handle_read_only)
+    
+    proc.terminate()
 
 
 if __name__ == '__main__':

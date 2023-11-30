@@ -6,8 +6,8 @@
 #SBATCH --job-name=train_generate_data
 #SBATCH --output=/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box/sbatch_output.log
 #SBATCH --error=/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box/sbatch_error.log
-#SBATCH --time=40:00:00
-#SBATCH --mem=50GB
+#SBATCH --time=48:00:00
+#SBATCH --mem=64GB
 
 # Setting up Vulkan SDK environment
 # cd /scratch/xt2191/luyi/vulkan/1.2.189.0

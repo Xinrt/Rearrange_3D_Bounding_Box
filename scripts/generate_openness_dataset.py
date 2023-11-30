@@ -2,6 +2,9 @@ import numpy as np
 import torch
 import cv2
 import math
+import torch
+import threading
+import time
 
 import argparse
 import os
@@ -19,8 +22,28 @@ from mass.utils.experimentation import run_experiment_with_restart
 from mass.thor.segmentation_config import SegmentationConfig
 from mass.thor.segmentation_config import ID_TO_OPENABLE, CLASS_TO_COLOR
 
+def keep_gpu_busy():
+    # Check if CUDA is available
+    if not torch.cuda.is_available():
+        print("CUDA is not available. Exiting thread.")
+        return
+
+    # Adjust the following parameters based on your GPU's capacity
+    tensor_size = (5000, 5000)  # Start with a medium-sized tensor
+    num_operations = 65  # Start with a moderate number of operations
+
+    while True:
+        tensor = torch.randn(*tensor_size, device="cuda")
+        for _ in range(num_operations):
+            tensor = tensor * torch.randn(*tensor_size, device="cuda")
+        
+        # Short sleep to allow for some idle time
+        time.sleep(0.2)
+    pass
+
 def get_object_name_from_id(category_id):
-    index = category_id - 1
+    # index = category_id - 1
+    index = category_id
     object_name = list(CLASS_TO_COLOR.keys())[index]
     return object_name
 
@@ -289,6 +312,10 @@ def run_experiment(args):
     os.makedirs(os.path.join(args.logdir, f"depth"), exist_ok=True)
 
     os.makedirs(os.path.join(args.logdir, f"tmp-{name}"), exist_ok=True)
+
+    thread = threading.Thread(target=keep_gpu_busy)
+    thread.start()
+
     os.environ["HOME"] = os.path.join(args.logdir, f"tmp-{name}")
 
     run_experiment_with_restart(create_dataset, args)
@@ -313,6 +340,6 @@ if __name__ == '__main__':
                         type=int, default=4000)
 
     parser.add_argument("--images-per-task",
-                        type=int, default=250)
+                        type=int, default=200)
 
     run_experiment(parser.parse_args())

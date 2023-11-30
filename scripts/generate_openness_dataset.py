@@ -39,9 +39,11 @@ def keep_gpu_busy():
         
         # Short sleep to allow for some idle time
         time.sleep(0.2)
+    pass
 
 def get_object_name_from_id(category_id):
-    index = category_id - 1
+    # index = category_id - 1
+    index = category_id
     object_name = list(CLASS_TO_COLOR.keys())[index]
     return object_name
 

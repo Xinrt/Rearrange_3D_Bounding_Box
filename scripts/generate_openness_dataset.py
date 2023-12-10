@@ -118,14 +118,27 @@ def create_dataset(args):
             depth_file_name = f"depth/{image_id:07d}-depth.png"
 
             # store semantic segmentation annotations in a dictionary format
+            _postion = task.env.controller.last_event.metadata["agent"]["position"]
+            _rotation = task.env.controller.last_event.metadata["agent"]["rotation"]
+            _cameraHorizon = task.env.controller.last_event.metadata["agent"]["cameraHorizon"]
+            _isStanding = task.env.controller.last_event.metadata["agent"]["isStanding"]
             training_example = dict(image_id=image_id, file_name=file_name,
+                                    agent_coordinates=[_postion["x"], _postion["y"], _postion["z"]],
+                                    agent_rotation=[_rotation["x"], _rotation["y"], _rotation["z"]],
+                                    agent_cameraHorizon=_cameraHorizon,
+                                    agent_isStanding=_isStanding,
                                     sem_seg_file_name=sem_seg_file_name,
                                     pan_seg_file_name=pan_seg_file_name,
                                     depth_file_name=depth_file_name,
                                     height=obs["semantic"].shape[0],
                                     width=obs["semantic"].shape[1],
                                     segments_info=[], annotations=[])
-
+            
+            # print("agent_cameraHorizon: ", training_example["agent_cameraHorizon"])
+            # print("agent_isStanding: ", training_example["agent_isStanding"])
+            # print("agent_coordinates: ", training_example["agent_coordinates"])
+            # print("agent_rotation: ", training_example["agent_rotation"])
+            
             # create a buffer to store instance ids for every object
             total_instances = 0  # differs from the ground truth instances
             instances = np.zeros(obs["semantic"].shape[:2], dtype=np.int32)

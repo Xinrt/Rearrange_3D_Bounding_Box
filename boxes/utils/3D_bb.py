@@ -4,7 +4,7 @@ import json
 import os
 
 import math
-from Rearrangement_LLM.scripts.test_maskrcnn_demo2 import generate_2dboxes
+from YOLO_detection import generate_2dboxes
 
 def to_rad(deg):
     return deg * np.pi / 180
@@ -64,7 +64,6 @@ def camera_to_world(depth_image, camera_coord, camera_pose, fov=90):
     height, width = depth_image.shape
 
     # Approximate focal length
-    # f = width / (2 * np.tan(fov * np.pi / 360))
     f = 0.5 * width / math.tan(to_rad(fov/2))
 
     # Get pixel coordinates

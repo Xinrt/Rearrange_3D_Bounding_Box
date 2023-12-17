@@ -1,7 +1,7 @@
 # Rearrange_3D_Bounding_Box
 
-Contents
-<!-- toc -->
+Contents:
+[TOC]
 
 
 ## Description

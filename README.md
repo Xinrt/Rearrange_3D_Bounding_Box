@@ -30,7 +30,7 @@ cd ai2thor-rearrangement
 pip install -r requirements.txt
 ```
 
-### Installd etectron2 (need PyTorch ≥ 1.8 and torchvision that matches the PyTorch installation)
+### Install detectron2 (need PyTorch ≥ 1.8 and torchvision that matches the PyTorch installation)
 ```
 conda activate thor-rearrange
 git clone https://github.com/facebookresearch/detectron2.git

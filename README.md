@@ -50,8 +50,8 @@ python 3D_bb.py
 ```
 
 ## References 
-https://github.com/allenai/ai2thor-rearrangement/
-https://github.com/brandontrabucco/mass/
+- https://github.com/allenai/ai2thor-rearrangement/
+- https://github.com/brandontrabucco/mass/
 
 
 

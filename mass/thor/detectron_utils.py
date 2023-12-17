@@ -10,11 +10,6 @@ from ultralytics import YOLO
 
 
 
-
-
-
-
-
 class CondInstPredictor:
     def __init__(self, cfg):
         self.model_path = cfg.MODEL.WEIGHTS

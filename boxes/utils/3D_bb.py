@@ -1,29 +1,26 @@
-import cv2
 import numpy as np
-import json
-import os
+from torch.utils.data import DataLoader
 
 import math
 from YOLO_detection import generate_2dboxes
+from mass.thor.segmentation_config import CLASS_TO_COLOR
+from Dataset.Dataset import MyDataset, custom_collate_fn
+
+
+DATASET_PATH = '/vast/xt2191/dataset'
+
+# Function to find the corresponding ids for given key names
+def find_indexes_for_keys(keys, dictionary):
+    indexes = {key: list(dictionary.keys()).index(key) for key in keys if key in dictionary}
+    return indexes
 
 def to_rad(deg):
     return deg * np.pi / 180
 
-
-def load_images(rgb_image_path, depth_image_path):
-    rgb_image = cv2.imread(rgb_image_path)
-
-    # Read depth information from .png file
-    depth_image = cv2.imread(depth_image_path, cv2.IMREAD_UNCHANGED)
-    # Transform depth values back to the real depth values
-    depth_normalized = depth_image / 255.0
-
-    return rgb_image, depth_normalized
-
 def object_detection(rgb_image):
-    boxes = generate_2dboxes(rgb_image)
+    boxes, names = generate_2dboxes(rgb_image)
     print("2D: \n", boxes)
-    return boxes
+    return boxes, names
 
 
 def create_rotation_matrix(horizon, pitch, yaw, roll):
@@ -91,10 +88,10 @@ def extract_depth_from_box(depth_image, box):
     return depth_image[ymin:ymax, xmin:xmax]
 
 
-def estimate_3d_bounding_boxes(bounding_boxes_2d, depth_image, camera_coord, camera_pose, fov=90):
-    bounding_boxes_3d = []
+def estimate_3d_bounding_boxes(bounding_boxes_2d, index_boxes, depth_image, camera_coord, camera_pose, fov=90):
+    bounding_boxes_3d = {}
 
-    for box in bounding_boxes_2d:
+    for box, idx in zip(bounding_boxes_2d, index_boxes):
         depth_box = extract_depth_from_box(depth_image, box)
         if depth_box.size == 0:
             continue
@@ -102,7 +99,7 @@ def estimate_3d_bounding_boxes(bounding_boxes_2d, depth_image, camera_coord, cam
         world_points = camera_to_world(depth_box, camera_coord, camera_pose, fov)
         min_coord = world_points.min(axis=0)
         max_coord = world_points.max(axis=0)
-        # Calculate 3D bounding box
+
         bbox_3d = np.array([
             [min_coord[0], min_coord[1], min_coord[2]],
             [max_coord[0], min_coord[1], min_coord[2]],
@@ -113,40 +110,13 @@ def estimate_3d_bounding_boxes(bounding_boxes_2d, depth_image, camera_coord, cam
             [min_coord[0], max_coord[1], max_coord[2]],
             [max_coord[0], max_coord[1], max_coord[2]],
         ])
-        bounding_boxes_3d.append(bbox_3d)
+        bounding_boxes_3d[idx] = bbox_3d
 
     return bounding_boxes_3d
 
 
-# read GT from json file
-# TODO: some GT is null
-def read_bounding_box_from_file(file_path):
-    bounding_boxes = []
-
-    if os.path.isfile(file_path) and file_path.endswith(".json"):
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-
-            if 'annotations' in data:
-                for annotation in data['annotations']:
-                    # 确保 object_oriented_bounding_box 存在且不为 None
-                    if annotation.get('object_oriented_bounding_box'):
-                        oobb = annotation['object_oriented_bounding_box']
-                        # 检查 cornerPoints 是否存在
-                        if 'cornerPoints' in oobb:
-                            bounding_box = oobb['cornerPoints']
-                            bounding_boxes.append(bounding_box)
-
-    return bounding_boxes
-
-
-
-
-
-
-# compute 3D IOU
 def compute_3d_iou(box1, box2):
-    # 将每个3D边界框转换为轴对齐的边界框
+    # Convert each 3D bounding box to a shaft-aligned bounding box
     def get_aabb(box):
         min_coord = np.min(box, axis=0)
         max_coord = np.max(box, axis=0)
@@ -155,7 +125,7 @@ def compute_3d_iou(box1, box2):
     box1_min, box1_max = get_aabb(box1)
     box2_min, box2_max = get_aabb(box2)
 
-    # 计算每个维度上的最大最小值
+    # Calculate the maximum and minimum values on each dimension
     xmin = max(box1_min[0], box2_min[0])
     ymin = max(box1_min[1], box2_min[1])
     zmin = max(box1_min[2], box2_min[2])
@@ -163,46 +133,92 @@ def compute_3d_iou(box1, box2):
     ymax = min(box1_max[1], box2_max[1])
     zmax = min(box1_max[2], box2_max[2])
 
-    # 计算交集体积
+    # Computed intersection volume
     intersection = max(0, xmax - xmin) * max(0, ymax - ymin) * max(0, zmax - zmin)
 
-    # 计算每个框的体积
+    # Compute the volume of each 3D bounding box
     volume1 = np.prod(box1_max - box1_min)
     volume2 = np.prod(box2_max - box2_min)
 
-    # 计算并集体积
+    # Compute the union volume
     union = volume1 + volume2 - intersection
 
-    # 计算IOU
+    # Compute the intersection over union
     iou = intersection / union if union != 0 else 0
 
     return iou
 
 
-# 示例使用
-rgb_image_path = '/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box/test_data_dir/rgb/0000019-rgb.png'
-depth_image_path = '/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box/test_data_dir/depth/0000019-depth.png'
-json_file_path = '/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box/test_data_dir/annotations/0000019.json'  
+if __name__ == "__main__":
 
-rgb_image, depth_image = load_images(rgb_image_path, depth_image_path)
+    dataset = MyDataset(DATASET_PATH)
 
-# 假设相机坐标和姿态
-agent_coord = np.array([-0.75, 0.9014922380447388, -1.25])  # 示例坐标
-horizon = -30.0
-agent_rotation = np.array([-0.0, 90.0, 0.0])
-pitch, yaw, roll = agent_rotation[0], agent_rotation[1], agent_rotation[2]         # 示例旋转角度
-camera_pose = create_rotation_matrix(horizon, pitch, yaw, roll)
+    dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=0, collate_fn=custom_collate_fn)
 
-# Get estimate 3D bb
-bb_3d = estimate_3d_bounding_boxes(object_detection(rgb_image), depth_image, agent_coord, camera_pose)
-print("3D: \n", bb_3d)
+    print("Length: ", len(dataset))
 
-# Get GT 3D bb
-GT_bb_3d = read_bounding_box_from_file(json_file_path)
-print("GT 3D: \n", GT_bb_3d)
+    for batch in dataloader:
+        annotations = batch['annotation']
+        rgb_image = batch['rgb']
+        depth_image = batch['depth'] / 255.0
 
-# Compute 3D IOU
-# TODO: match the obejects
-iou = compute_3d_iou(bb_3d[0], GT_bb_3d[0])
-print("IOU: \n", iou)
+        for annotation in annotations:
+            print("annotation: ", annotation)
+            agent_coordinates = annotation['agent_coordinates']
+            agent_cameraHorizon = annotation['agent_cameraHorizon']
+            agent_rotation = annotation['agent_rotation']
 
+            agent_coord = np.array(agent_coordinates)  
+            horizon = agent_cameraHorizon
+            agent_rotation = np.array(agent_rotation)
+
+            pitch, yaw, roll = agent_rotation[0], agent_rotation[1], agent_rotation[2]         
+            camera_pose = create_rotation_matrix(horizon, pitch, yaw, roll)
+
+
+            # Get GT 3D bb
+            bounding_boxes = {}
+            annotation_in_file = annotation['annotations']
+            # print("annotation_in_file: ", annotation_in_file)
+            for annot in annotation_in_file:
+                oobb = annot.get('object_oriented_bounding_box')
+                if oobb and 'cornerPoints' in oobb:
+                    obj_id = annot['category_id']
+                    bounding_box = oobb['cornerPoints']
+                    bounding_boxes[obj_id] = bounding_box
+
+            print("GT 3D: \n", bounding_boxes)
+
+
+        # Get estimate 3D bb
+        # Ensure rgb_image is on CPU and convert to numpy
+        rgb_numpy = rgb_image.squeeze(0).permute(1, 2, 0).cpu().numpy()
+
+        boxes_2d, obj_names = object_detection(rgb_numpy)
+        ids_for_keys = find_indexes_for_keys(obj_names, CLASS_TO_COLOR)
+        indexes_only = list(ids_for_keys.values())
+        # print(indexes_only)
+
+        depth_numpy = depth_image.squeeze().cpu().numpy()
+        bb_3d = estimate_3d_bounding_boxes(boxes_2d, indexes_only, depth_numpy, agent_coord, camera_pose)
+        print("3D: \n", bb_3d)
+
+        ious = []
+        for idx in indexes_only:
+            if idx in bounding_boxes and idx in bb_3d:
+                gt_box = bounding_boxes[idx]
+                pred_box = bb_3d[idx]
+                iou = compute_3d_iou(gt_box, pred_box)
+                ious.append(iou)
+                print(f"IOU for object ID {idx}: {iou}")
+            else:
+                print(f"Bounding box for object ID {idx} not found in both GT and predicted")
+
+        # Average IOU
+        if ious:
+            avg_iou = sum(ious) / len(ious)
+            print("Average IOU:", avg_iou)
+        else:
+            print("No IOU calculated")
+
+        # import pdb; pdb.set_trace()

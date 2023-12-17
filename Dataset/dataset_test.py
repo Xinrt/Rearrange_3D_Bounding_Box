@@ -18,6 +18,6 @@ if __name__ == "__main__":
         print("rgb.shape: ", batch['rgb'].shape)
         print("depth.shape: ", batch['depth'].shape)
         print("segmentation.shape: ", batch['sem'].shape)
-        print("pan.shape: ", batch['pan'].shape)
+        # print("pan.shape: ", batch['pan'].shape)
         break
         

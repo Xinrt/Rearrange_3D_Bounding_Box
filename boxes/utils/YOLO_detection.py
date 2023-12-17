@@ -92,6 +92,6 @@ def generate_2dboxes(frame):
 
 
 
-    return filtered_boxes
+    return filtered_boxes, class_name_list
 
 

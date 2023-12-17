@@ -1,9 +1,5 @@
 # Rearrange_3D_Bounding_Box
 
-Contents:
-[TOC]
-
-
 ## Description
 
 ## Pipeline

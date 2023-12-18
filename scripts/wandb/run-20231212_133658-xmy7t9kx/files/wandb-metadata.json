@@ -1,0 +1,291 @@
+{
+    "os": "Linux-4.18.0-372.26.1.el8_6.x86_64-x86_64-with-glibc2.28",
+    "python": "3.9.18",
+    "heartbeatAt": "2023-12-12T18:36:59.166930",
+    "startedAt": "2023-12-12T18:36:58.238642",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "/home/xt2191/.config/Ultralytics/DDP/_temp_v86lwpga23158757376592.py",
+    "codePathLocal": null,
+    "git": {
+        "remote": "https://github.com/Xinrt/Rearrange_3D_Bounding_Box",
+        "commit": "83b9a0067c42ea97633146843f50578438c21b69"
+    },
+    "email": "luyi4me@gmail.com",
+    "root": "/scratch/xt2191/luyi/Rearrange_3D_Bounding_Box",
+    "host": "gv004.hpc.nyu.edu",
+    "username": "xt2191",
+    "executable": "/scratch/xt2191/miniconda3/envs/thor-rearrange/bin/python",
+    "cpu_count": 48,
+    "cpu_count_logical": 48,
+    "cpu_freq": {
+        "current": 3867.8444375,
+        "min": 3900.0,
+        "max": 3900.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3500.502,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3500.001,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3156.03,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        },
+        {
+            "current": 3900.0,
+            "min": 3900.0,
+            "max": 3900.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 78.08685302734375,
+            "used": 25.808719635009766
+        }
+    },
+    "gpu": "Tesla V100-PCIE-32GB",
+    "gpu_count": 2,
+    "gpu_devices": [
+        {
+            "name": "Tesla V100-PCIE-32GB",
+            "memory_total": 34359738368
+        },
+        {
+            "name": "Tesla V100-PCIE-32GB",
+            "memory_total": 34359738368
+        }
+    ],
+    "memory": {
+        "total": 377.32330322265625
+    }
+}

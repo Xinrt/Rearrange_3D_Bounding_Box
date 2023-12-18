@@ -25,7 +25,7 @@ class MyDataset(torch.utils.data.Dataset):
     RGB_FOLDER = 'rgb'
     DEPTH_FOLDER = 'depth'
     SEGMENTATION_FOLDER = 'sem'
-    PAN_FOLDER = 'pan'
+    # PAN_FOLDER = 'pan'
 
     def __init__(self, base_path: str):
         """
@@ -38,7 +38,7 @@ class MyDataset(torch.utils.data.Dataset):
         self.rgb_path = os.path.join(self.base_path, self.RGB_FOLDER)
         self.depth_path = os.path.join(self.base_path, self.DEPTH_FOLDER)
         self.segmentation_path = os.path.join(self.base_path, self.SEGMENTATION_FOLDER)
-        self.pan_path = os.path.join(self.base_path, self.PAN_FOLDER)
+        # self.pan_path = os.path.join(self.base_path, self.PAN_FOLDER)
 
         self.data_names = None
         self._load_and_validate_dataset()
@@ -56,7 +56,9 @@ class MyDataset(torch.utils.data.Dataset):
         ))
 
         length = len(annotation_files_without_extension)
-        assert all(len(os.listdir(path)) == length for path in [self.rgb_path, self.depth_path, self.segmentation_path, self.pan_path]), "Inconsistent dataset sizes"
+            
+        # assert all(len(os.listdir(path)) == length for path in [self.rgb_path, self.depth_path, self.segmentation_path, self.pan_path]), "Inconsistent dataset sizes"
+        # assert all(len(os.listdir(path)) == length for path in [self.rgb_path, self.depth_path, self.segmentation_path]), "Inconsistent dataset sizes"
 
         self.data_names = annotation_files_without_extension
         
@@ -70,7 +72,7 @@ class MyDataset(torch.utils.data.Dataset):
             'rgb': os.path.join(self.rgb_path, file_name + '-rgb.png'),
             'depth': os.path.join(self.depth_path, file_name + '-depth.png'),
             'segmentation': os.path.join(self.segmentation_path, file_name + '-sem.png'),
-            'pan': os.path.join(self.pan_path, file_name + '-pan.png'),
+            # 'pan': os.path.join(self.pan_path, file_name + '-pan.png'),
         }
 
         try:
@@ -82,13 +84,13 @@ class MyDataset(torch.utils.data.Dataset):
         rgb_image = read_image(paths['rgb'], cv2.IMREAD_COLOR)
         depth_image = read_image(paths['depth'], cv2.IMREAD_GRAYSCALE)
         segmentation_image = read_image(paths['segmentation'], cv2.IMREAD_GRAYSCALE)
-        pan_image = read_image(paths['pan'], cv2.IMREAD_COLOR)
+        # pan_image = read_image(paths['pan'], cv2.IMREAD_COLOR)
 
         _data = {
             'rgb': rgb_image,
             'depth': depth_image,
             'sem': segmentation_image,
-            'pan': pan_image,
+            # 'pan': pan_image,
             'annotation': annotation
         }
         
@@ -98,13 +100,13 @@ def custom_collate_fn(batch):
     rgb = torch.stack([item['rgb'] for item in batch])
     depth = torch.stack([item['depth'] for item in batch])
     sem = torch.stack([item['sem'] for item in batch])
-    pan = torch.stack([item['pan'] for item in batch])
+    # pan = torch.stack([item['pan'] for item in batch])
     annotation = [item['annotation'] for item in batch]  # Handle metadata separately
     
     return {
         'rgb': rgb,
         'depth': depth,
         'sem': sem,
-        'pan': pan,
+        # 'pan': pan,
         'annotation': annotation
     }
